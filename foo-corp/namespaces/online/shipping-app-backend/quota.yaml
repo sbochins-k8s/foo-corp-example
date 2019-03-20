@@ -1,7 +1,7 @@
 kind: ResourceQuota
 apiVersion: v1
 metadata:
-  name: shipping-backend-quota
+  name: quota
 spec:
   hard:
     pods: "3"

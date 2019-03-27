@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  generateName: httpbin-
+  labels:
+    controller-revision-hash: "3392271181"
+    name: foobar
+    pod-template-generation: "1"
+  name: httpbin-bsg2m
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DaemonSet
+    name: httpbin
+    uid: d00e1812-50d8-11e9-a91f-42010a800195
+spec:
+  containers:
+  - image: docker.io/kennethreitz/httpbin
+    imagePullPolicy: Always
+    name: httpbin
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-gmq5s
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  nodeName: gke-standard-cluster-4-default-pool-14796f6d-242r
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/disk-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/memory-pressure
+    operator: Exists
+  - effect: NoSchedule
+    key: node.kubernetes.io/unschedulable
+    operator: Exists
+  volumes:
+  - name: default-token-gmq5s
+    secret:
+      defaultMode: 420
+      secretName: default-token-gmq5s
+status:
+  conditions:
+  - lastTransitionTime: "2019-03-27T21:39:34Z"
+    status: "True"
+    type: Initialized
+  - lastTransitionTime: "2019-03-27T21:39:37Z"
+    status: "True"
+    type: Ready
+  - status: "True"
+    type: ContainersReady
+  - lastTransitionTime: "2019-03-27T21:39:34Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://d87c7864d6e0106dc67e722eeeb25918ea7b3cbc60d30c1b373e18399aa9ce39
+    image: kennethreitz/httpbin:latest
+    imageID: docker-pullable://kennethreitz/httpbin@sha256:599fe5e5073102dbb0ee3dbb65f049dab44fa9fc251f6835c9990f8fb196a72b
+    name: httpbin
+    ready: true
+    restartCount: 0
+    state:
+      running:
+        startedAt: "2019-03-27T21:39:36Z"
+  hostIP: 10.128.0.19
+  phase: Running
+  podIP: 10.48.0.122
+  qosClass: BestEffort
+  startTime: "2019-03-27T21:39:34Z"

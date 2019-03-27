@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: httpbin
+spec:
+  selector:
+    matchLabels:
+      name: foobar
+  template:
+    metadata:
+      labels:
+        name: foobar
+    spec:
+      containers:
+      - image: docker.io/kennethreitz/httpbin
+        name: httpbin
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master

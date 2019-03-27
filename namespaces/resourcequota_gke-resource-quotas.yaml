@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: gke-resource-quotas
+spec:
+  hard:
+    count/ingresses.extensions: 1G
+    count/jobs.batch: 1G
+    pods: 1G
+    services: 1G
+status:
+  hard:
+    count/ingresses.extensions: 1G
+    count/jobs.batch: 1G
+    pods: 1G
+    services: 1G
+  used:
+    count/ingresses.extensions: "0"
+    count/jobs.batch: "0"
+    pods: "3"
+    services: "0"

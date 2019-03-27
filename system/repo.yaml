@@ -1,13 +1,10 @@
 apiVersion: configmanagement.gke.io/v1
 kind: Repo
 metadata:
-  creationTimestamp: null
+  generation: 1
   name: repo
 spec:
-  version: 0.2.0
+  version: 0.1.0
 status:
-  import:
-    lastUpdate: null
-  source: {}
-  sync:
-    lastUpdate: null
+  source:
+    token: de0a7c8a91b5ccd195c00661c065aa99720d3d59

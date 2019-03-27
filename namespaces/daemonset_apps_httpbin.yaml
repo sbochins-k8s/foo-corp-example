@@ -12,8 +12,11 @@ spec:
         name: foobar
     spec:
       containers:
-      - image: docker.io/kennethreitz/httpbin
-        name: httpbin
+        - image: "gcr.io/google-samples/hello-app:2.0"
+          name: httpbin
+          env:
+          - name: "PORT"
+            value: "50000"
       terminationGracePeriodSeconds: 30
       tolerations:
       - effect: NoSchedule

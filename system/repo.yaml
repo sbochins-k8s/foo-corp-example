@@ -1,13 +1,6 @@
 apiVersion: configmanagement.gke.io/v1
 kind: Repo
 metadata:
-  generation: 1
   name: repo
 spec:
   version: 0.1.0
-status:
-  import:
-    lastUpdate: "2019-03-27T21:35:56Z"
-    token: bbefe9131e62b73eff1ac47ca53653a8c879f055
-  source:
-    token: bbefe9131e62b73eff1ac47ca53653a8c879f055

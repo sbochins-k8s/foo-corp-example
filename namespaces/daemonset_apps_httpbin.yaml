@@ -2,8 +2,6 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: httpbin
-  labels:
-    baz: qux
 spec:
   selector:
     matchLabels:

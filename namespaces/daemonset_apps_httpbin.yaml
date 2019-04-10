@@ -3,7 +3,7 @@ kind: DaemonSet
 metadata:
   name: httpbin
   labels:
-    bar: baz
+    baz: qux
 spec:
   selector:
     matchLabels:

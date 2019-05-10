@@ -4,4 +4,4 @@ metadata:
   name: acme-prod
   labels:
     environment: production
-  
+    istio-injection: enabled

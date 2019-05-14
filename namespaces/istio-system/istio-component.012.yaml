@@ -1,0 +1,131 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+  namespace: istio-system
+  labels:
+    app: prometheus
+    chart: prometheus
+    heritage: Tiller
+    release: istio
+data:
+  prometheus.yml: "global:\n  scrape_interval: 15s\nscrape_configs:\n\n- job_name:\
+    \ 'istio-mesh'\n  kubernetes_sd_configs:\n  - role: endpoints\n    namespaces:\n\
+    \      names:\n      - istio-system\n\n  relabel_configs:\n  - source_labels:\
+    \ [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]\n   \
+    \ action: keep\n    regex: istio-telemetry;prometheus\n\n# Scrape config for envoy\
+    \ stats\n- job_name: 'envoy-stats'\n  metrics_path: /stats/prometheus\n  kubernetes_sd_configs:\n\
+    \  - role: pod\n\n  relabel_configs:\n  - source_labels: [__meta_kubernetes_pod_container_port_name]\n\
+    \    action: keep\n    regex: '.*-envoy-prom'\n  - source_labels: [__address__,\
+    \ __meta_kubernetes_pod_annotation_prometheus_io_port]\n    action: replace\n\
+    \    regex: ([^:]+)(?::\\d+)?;(\\d+)\n    replacement: $1:15090\n    target_label:\
+    \ __address__\n  - action: labelmap\n    regex: __meta_kubernetes_pod_label_(.+)\n\
+    \  - source_labels: [__meta_kubernetes_namespace]\n    action: replace\n    target_label:\
+    \ namespace\n  - source_labels: [__meta_kubernetes_pod_name]\n    action: replace\n\
+    \    target_label: pod_name\n\n  metric_relabel_configs:\n  # Exclude some of\
+    \ the envoy metrics that have massive cardinality\n  # This list may need to be\
+    \ pruned further moving forward, as informed\n  # by performance and scalability\
+    \ testing.\n  - source_labels: [ cluster_name ]\n    regex: '(outbound|inbound|prometheus_stats).*'\n\
+    \    action: drop\n  - source_labels: [ tcp_prefix ]\n    regex: '(outbound|inbound|prometheus_stats).*'\n\
+    \    action: drop\n  - source_labels: [ listener_address ]\n    regex: '(.+)'\n\
+    \    action: drop\n  - source_labels: [ http_conn_manager_listener_prefix ]\n\
+    \    regex: '(.+)'\n    action: drop\n  - source_labels: [ http_conn_manager_prefix\
+    \ ]\n    regex: '(.+)'\n    action: drop\n  - source_labels: [ __name__ ]\n  \
+    \  regex: 'envoy_tls.*'\n    action: drop\n  - source_labels: [ __name__ ]\n \
+    \   regex: 'envoy_tcp_downstream.*'\n    action: drop\n  - source_labels: [ __name__\
+    \ ]\n    regex: 'envoy_http_(stats|admin).*'\n    action: drop\n  - source_labels:\
+    \ [ __name__ ]\n    regex: 'envoy_cluster_(lb|retry|bind|internal|max|original).*'\n\
+    \    action: drop\n\n- job_name: 'istio-policy'\n  kubernetes_sd_configs:\n  -\
+    \ role: endpoints\n    namespaces:\n      names:\n      - istio-system\n\n\n \
+    \ relabel_configs:\n  - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]\n\
+    \    action: keep\n    regex: istio-policy;http-monitoring\n\n- job_name: 'istio-telemetry'\n\
+    \  kubernetes_sd_configs:\n  - role: endpoints\n    namespaces:\n      names:\n\
+    \      - istio-system\n\n  relabel_configs:\n  - source_labels: [__meta_kubernetes_service_name,\
+    \ __meta_kubernetes_endpoint_port_name]\n    action: keep\n    regex: istio-telemetry;http-monitoring\n\
+    \n- job_name: 'pilot'\n  kubernetes_sd_configs:\n  - role: endpoints\n    namespaces:\n\
+    \      names:\n      - istio-system\n\n  relabel_configs:\n  - source_labels:\
+    \ [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]\n   \
+    \ action: keep\n    regex: istio-pilot;http-monitoring\n\n- job_name: 'galley'\n\
+    \  kubernetes_sd_configs:\n  - role: endpoints\n    namespaces:\n      names:\n\
+    \      - istio-system\n\n  relabel_configs:\n  - source_labels: [__meta_kubernetes_service_name,\
+    \ __meta_kubernetes_endpoint_port_name]\n    action: keep\n    regex: istio-galley;http-monitoring\n\
+    \n- job_name: 'citadel'\n  kubernetes_sd_configs:\n  - role: endpoints\n    namespaces:\n\
+    \      names:\n      - istio-system\n\n  relabel_configs:\n  - source_labels:\
+    \ [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]\n   \
+    \ action: keep\n    regex: istio-citadel;http-monitoring\n\n# scrape config for\
+    \ API servers\n- job_name: 'kubernetes-apiservers'\n  kubernetes_sd_configs:\n\
+    \  - role: endpoints\n    namespaces:\n      names:\n      - default\n  scheme:\
+    \ https\n  tls_config:\n    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n\
+    \  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n  relabel_configs:\n\
+    \  - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]\n\
+    \    action: keep\n    regex: kubernetes;https\n\n# scrape config for nodes (kubelet)\n\
+    - job_name: 'kubernetes-nodes'\n  scheme: https\n  tls_config:\n    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n\
+    \  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n  kubernetes_sd_configs:\n\
+    \  - role: node\n  relabel_configs:\n  - action: labelmap\n    regex: __meta_kubernetes_node_label_(.+)\n\
+    \  - target_label: __address__\n    replacement: kubernetes.default.svc:443\n\
+    \  - source_labels: [__meta_kubernetes_node_name]\n    regex: (.+)\n    target_label:\
+    \ __metrics_path__\n    replacement: /api/v1/nodes/${1}/proxy/metrics\n\n# Scrape\
+    \ config for Kubelet cAdvisor.\n#\n# This is required for Kubernetes 1.7.3 and\
+    \ later, where cAdvisor metrics\n# (those whose names begin with 'container_')\
+    \ have been removed from the\n# Kubelet metrics endpoint.  This job scrapes the\
+    \ cAdvisor endpoint to\n# retrieve those metrics.\n#\n# In Kubernetes 1.7.0-1.7.2,\
+    \ these metrics are only exposed on the cAdvisor\n# HTTP endpoint; use \"replacement:\
+    \ /api/v1/nodes/${1}:4194/proxy/metrics\"\n# in that case (and ensure cAdvisor's\
+    \ HTTP server hasn't been disabled with\n# the --cadvisor-port=0 Kubelet flag).\n\
+    #\n# This job is not necessary and should be removed in Kubernetes 1.6 and\n#\
+    \ earlier versions, or it will cause the metrics to be scraped twice.\n- job_name:\
+    \ 'kubernetes-cadvisor'\n  scheme: https\n  tls_config:\n    ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt\n\
+    \  bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token\n  kubernetes_sd_configs:\n\
+    \  - role: node\n  relabel_configs:\n  - action: labelmap\n    regex: __meta_kubernetes_node_label_(.+)\n\
+    \  - target_label: __address__\n    replacement: kubernetes.default.svc:443\n\
+    \  - source_labels: [__meta_kubernetes_node_name]\n    regex: (.+)\n    target_label:\
+    \ __metrics_path__\n    replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor\n\
+    \n# scrape config for service endpoints.\n- job_name: 'kubernetes-service-endpoints'\n\
+    \  kubernetes_sd_configs:\n  - role: endpoints\n  relabel_configs:\n  - source_labels:\
+    \ [__meta_kubernetes_service_annotation_prometheus_io_scrape]\n    action: keep\n\
+    \    regex: true\n  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]\n\
+    \    action: replace\n    target_label: __scheme__\n    regex: (https?)\n  - source_labels:\
+    \ [__meta_kubernetes_service_annotation_prometheus_io_path]\n    action: replace\n\
+    \    target_label: __metrics_path__\n    regex: (.+)\n  - source_labels: [__address__,\
+    \ __meta_kubernetes_service_annotation_prometheus_io_port]\n    action: replace\n\
+    \    target_label: __address__\n    regex: ([^:]+)(?::\\d+)?;(\\d+)\n    replacement:\
+    \ $1:$2\n  - action: labelmap\n    regex: __meta_kubernetes_service_label_(.+)\n\
+    \  - source_labels: [__meta_kubernetes_namespace]\n    action: replace\n    target_label:\
+    \ kubernetes_namespace\n  - source_labels: [__meta_kubernetes_service_name]\n\
+    \    action: replace\n    target_label: kubernetes_name\n\n- job_name: 'kubernetes-pods'\n\
+    \  kubernetes_sd_configs:\n  - role: pod\n  relabel_configs:  # If first two labels\
+    \ are present, pod should be scraped  by the istio-secure job.\n  - source_labels:\
+    \ [__meta_kubernetes_pod_annotation_prometheus_io_scrape]\n    action: keep\n\
+    \    regex: true\n  # Keep target if there's no sidecar or if prometheus.io/scheme\
+    \ is explicitly set to \"http\"\n  - source_labels: [__meta_kubernetes_pod_annotation_sidecar_istio_io_status,\
+    \ __meta_kubernetes_pod_annotation_prometheus_io_scheme]\n    action: keep\n \
+    \   regex: ((;.*)|(.*;http))\n  - source_labels: [__meta_kubernetes_pod_annotation_istio_mtls]\n\
+    \    action: drop\n    regex: (true)\n  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]\n\
+    \    action: replace\n    target_label: __metrics_path__\n    regex: (.+)\n  -\
+    \ source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]\n\
+    \    action: replace\n    regex: ([^:]+)(?::\\d+)?;(\\d+)\n    replacement: $1:$2\n\
+    \    target_label: __address__\n  - action: labelmap\n    regex: __meta_kubernetes_pod_label_(.+)\n\
+    \  - source_labels: [__meta_kubernetes_namespace]\n    action: replace\n    target_label:\
+    \ namespace\n  - source_labels: [__meta_kubernetes_pod_name]\n    action: replace\n\
+    \    target_label: pod_name\n\n- job_name: 'kubernetes-pods-istio-secure'\n  scheme:\
+    \ https\n  tls_config:\n    ca_file: /etc/istio-certs/root-cert.pem\n    cert_file:\
+    \ /etc/istio-certs/cert-chain.pem\n    key_file: /etc/istio-certs/key.pem\n  \
+    \  insecure_skip_verify: true  # prometheus does not support secure naming.\n\
+    \  kubernetes_sd_configs:\n  - role: pod\n  relabel_configs:\n  - source_labels:\
+    \ [__meta_kubernetes_pod_annotation_prometheus_io_scrape]\n    action: keep\n\
+    \    regex: true\n  # sidecar status annotation is added by sidecar injector and\n\
+    \  # istio_workload_mtls_ability can be specifically placed on a pod to indicate\
+    \ its ability to receive mtls traffic.\n  - source_labels: [__meta_kubernetes_pod_annotation_sidecar_istio_io_status,\
+    \ __meta_kubernetes_pod_annotation_istio_mtls]\n    action: keep\n    regex: (([^;]+);([^;]*))|(([^;]*);(true))\n\
+    \  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scheme]\n\
+    \    action: drop\n    regex: (http)\n  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]\n\
+    \    action: replace\n    target_label: __metrics_path__\n    regex: (.+)\n  -\
+    \ source_labels: [__address__]  # Only keep address that is host:port\n    action:\
+    \ keep    # otherwise an extra target with ':443' is added for https scheme\n\
+    \    regex: ([^:]+):(\\d+)\n  - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]\n\
+    \    action: replace\n    regex: ([^:]+)(?::\\d+)?;(\\d+)\n    replacement: $1:$2\n\
+    \    target_label: __address__\n  - action: labelmap\n    regex: __meta_kubernetes_pod_label_(.+)\n\
+    \  - source_labels: [__meta_kubernetes_namespace]\n    action: replace\n    target_label:\
+    \ namespace\n  - source_labels: [__meta_kubernetes_pod_name]\n    action: replace\n\
+    \    target_label: pod_name"

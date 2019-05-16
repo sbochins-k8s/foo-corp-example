@@ -3922,6 +3922,9 @@ metadata:
     release: istio
     istio: galley
 spec:
+  selector:
+    matchLabels:
+      app: galley
   replicas: 1
   strategy:
     rollingUpdate:
@@ -4048,6 +4051,9 @@ metadata:
     app: istio-egressgateway
     istio: egressgateway
 spec:
+  selector:
+    matchLabels:
+      app: istio-egressgateway
   template:
     metadata:
       labels:
@@ -4213,6 +4219,9 @@ metadata:
     app: istio-ingressgateway
     istio: ingressgateway
 spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
   template:
     metadata:
       labels:
@@ -4383,6 +4392,9 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: grafana
   replicas: 1
   template:
     metadata:
@@ -4530,6 +4542,9 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: kiali
   replicas: 1
   selector:
     matchLabels:
@@ -4629,6 +4644,9 @@ metadata:
     release: istio
     istio: mixer
 spec:
+  selector:
+    matchLabels:
+      app: istio-mixer
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -4798,6 +4816,9 @@ metadata:
     release: istio
     istio: mixer
 spec:
+  selector:
+    matchLabels:
+      app: istio-telemetry
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -4973,6 +4994,9 @@ metadata:
   annotations:
     checksum/config-volume: f8da08b6b8c170dde721efd680270b2901e750d4aa186ebb6c22bef5b78a43f9
 spec:
+  selector:
+    matchLabels:
+      app: pilot
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -5241,6 +5265,9 @@ metadata:
     release: istio
     istio: citadel
 spec:
+  selector:
+    matchLabels:
+      app: security
   replicas: 1
   strategy:
     rollingUpdate:
@@ -5325,6 +5352,9 @@ metadata:
     release: istio
     istio: sidecar-injector
 spec:
+  selector:
+    matchLabels:
+      app: sidecarInjectorWebhook
   replicas: 1
   strategy:
     rollingUpdate:
@@ -5443,6 +5473,9 @@ metadata:
     heritage: Tiller
     release: istio
 spec:
+  selector:
+    matchLabels:
+      app: jaeger
   template:
     metadata:
       labels:

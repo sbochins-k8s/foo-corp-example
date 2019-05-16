@@ -3910,7 +3910,7 @@ spec:
   selector:
     istio: sidecar-injector
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-galley
@@ -4036,7 +4036,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-egressgateway
@@ -4201,7 +4201,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-ingressgateway
@@ -4372,7 +4372,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
@@ -4519,7 +4519,7 @@ spec:
         configMap:
           name: istio-grafana-configuration-dashboards-pilot-dashboard
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kiali
@@ -4617,7 +4617,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-policy
@@ -4786,7 +4786,7 @@ spec:
           mountPath: /var/run/secrets/istio.io/policy/adapter
           readOnly: true
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-telemetry
@@ -4959,7 +4959,7 @@ spec:
         - name: uds-socket
           mountPath: /sock
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-pilot
@@ -5135,7 +5135,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
@@ -5229,7 +5229,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-citadel
@@ -5313,7 +5313,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-sidecar-injector
@@ -5432,7 +5432,7 @@ spec:
                 values:
                 - s390x
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: istio-tracing

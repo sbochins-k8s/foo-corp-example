@@ -5674,38 +5674,6 @@ spec:
       name: cpu
       targetAverageUtilization: 80
 ---
-apiVersion: admissionregistration.k8s.io/v1beta1
-kind: MutatingWebhookConfiguration
-metadata:
-  name: istio-sidecar-injector
-  namespace: istio-system
-  labels:
-    app: sidecarInjectorWebhook
-    chart: sidecarInjectorWebhook
-    heritage: Tiller
-    release: istio
-webhooks:
-- name: sidecar-injector.istio.io
-  clientConfig:
-    service:
-      name: istio-sidecar-injector
-      namespace: istio-system
-      path: /inject
-    caBundle: ''
-  rules:
-  - operations:
-    - CREATE
-    apiGroups:
-    - ''
-    apiVersions:
-    - v1
-    resources:
-    - pods
-  failurePolicy: Fail
-  namespaceSelector:
-    matchLabels:
-      istio-injection: enabled
----
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:

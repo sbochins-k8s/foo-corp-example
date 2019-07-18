@@ -1,0 +1,15 @@
+# config-management.yaml
+
+apiVersion: addons.sigs.k8s.io/v1alpha1
+kind: ConfigManagement
+metadata:
+  name: config-management
+  namespace: config-management-system
+spec:
+  # clusterName is required and must be unique among all managed clusters
+  clusterName: gkeonprem-20170715c
+  git:
+    syncRepo: ssh://joseret@google.com@source.developers.google.com:2022/p/jc-gke-1/r/gkeonpremtest
+    syncBranch: master
+    secretType: ssh
+    policyDir: "./env/gkeonprem-20170715c"

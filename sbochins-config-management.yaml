@@ -1,0 +1,28 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: addons.sigs.k8s.io/v1alpha1
+kind: ConfigManagement
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"addons.sigs.k8s.io/v1alpha1","kind":"ConfigManagement","metadata":{"annotations":{},"name":"config-management"},"spec":{"clusterName":"gkeonprem-20170715c","git":{"policyDir":"./env/gkeonprem-20170715c","secretType":"ssh","syncBranch":"master","syncRepo":"ssh://joseret@google.com@source.developers.google.com:2022/p/jc-gke-1/r/gkeonpremtest"}}}
+  creationTimestamp: "2019-07-17T22:47:16Z"
+  finalizers:
+  - operator.configmanagement.gke.io
+  generation: 1
+  name: config-management
+  resourceVersion: "5664289"
+  selfLink: /apis/addons.sigs.k8s.io/v1alpha1/configmanagements/config-management
+  uid: d393ae2a-a8e4-11e9-99e7-42010a8001e8
+spec:
+  clusterName: gkeonprem-20170715c
+  git:
+    policyDir: env/gkeonprem-20170715c
+    secretType: ssh
+    syncBranch: master
+    syncRepo: ssh://sbochins@google.com@source.developers.google.com:2022/p/jc-gke-1/r/gkeonpremtest
+status:
+  configManagementVersion: v1.0.0-rc.5
+  healthy: true
